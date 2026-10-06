@@ -1,4 +1,5 @@
 -- CREATE TABLE
+DROP TABLE IF EXISTS withdrawals;
 DROP TABLE IF EXISTS accounts;
 CREATE TABLE accounts (
     account_number INTEGER PRIMARY KEY,
@@ -10,6 +11,16 @@ CREATE TABLE accounts (
 
 ALTER TABLE accounts ADD CONSTRAINT verify_type
 CHECK (type IN ('checking', 'savings', 'credit'));
+
+CREATE TABLE withdrawals (
+    id SERIAL PRIMARY KEY,
+    account_number INTEGER NOT NULL REFERENCES accounts(account_number),
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX withdrawals_account_date_idx
+ON withdrawals (account_number, created_at);
 
 -- LOAD DATAS
 INSERT INTO accounts 
